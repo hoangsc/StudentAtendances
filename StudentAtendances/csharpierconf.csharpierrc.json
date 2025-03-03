@@ -1,0 +1,5 @@
+{
+  "printWidth": 70,  // Độ rộng tối đa trước khi xuống dòng
+  "useTabs": false,    // Dùng khoảng trắng thay vì tab
+  "tabWidth": 0.5        // Số khoảng trắng cho mỗi tab
+}
