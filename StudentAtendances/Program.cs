@@ -1,4 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using StudentAtendances.Repository.Interfaces;
+using StudentAtendances.Repository.Interfaces.Groups;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+// Đăng ký DI
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 
 var app = builder.Build();
 
@@ -25,8 +30,6 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
