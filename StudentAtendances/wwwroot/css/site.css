@@ -20,3 +20,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+th, td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}

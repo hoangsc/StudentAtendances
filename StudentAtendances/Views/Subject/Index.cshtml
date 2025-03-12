@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "Danh sách môn học";
+}
+@model List<Subject>
+
+<h2>Danh sách môn học</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Mã môn</th>
+            <th>Tên môn</th>
+            <th>Giảng viên</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var subject in Model)
+        {
+            <tr>
+                <td>@subject.Id</td>
+                <td>
+                    <a href="@Url.Action("Index", "Home", new { subjectId = subject.Id })"
+                       class="text-primary"
+                       style="text-decoration: underline;">
+                        @subject.SubjectCode
+                    </a>
+                </td>
+                <td>@subject.SubjectName</td>
+                <td>@subject.Lecturer.Name</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editSubject(@subject.Id, '@subject.SubjectCode', '@subject.SubjectName', @subject.LecturerId)">Sửa</button>
+                    <form asp-action="DeleteSubject" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@subject.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Form Thêm / Sửa -->
+<h3 id="formTitle">Thêm Môn Học</h3>
+<form id="subjectForm" asp-action="AddSubject" method="post">
+    <input type="hidden" name="Id" id="subjectId" />
+
+    <div class="mb-3">
+        <label for="subjectCode" class="form-label">Mã môn</label>
+        <input type="text" class="form-control" id="subjectCode" name="SubjectCode" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="subjectName" class="form-label">Tên môn</label>
+        <input type="text" class="form-control" id="subjectName" name="SubjectName" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="lecturerId" class="form-label">Giảng viên</label>
+        <input type="number" class="form-control" id="lecturerId" name="LecturerId" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+</form>
+
+<script>
+    function editSubject(id, code, name, lecturerId) {
+        document.getElementById("formTitle").innerText = "Chỉnh sửa Môn Học";
+        document.getElementById("subjectId").value = id;
+        document.getElementById("subjectCode").value = code;
+        document.getElementById("subjectName").value = name;
+        document.getElementById("lecturerId").value = lecturerId;
+
+        document.getElementById("subjectForm").action = "/Subject/EditSubject";
+    }
+</script>

@@ -1,10 +1,8 @@
 ﻿@{
-    ViewData["Title"] = "Danh sách điểm danh";
+    ViewData["Title"] = "Quản lý lớp";
 }
 
 @model List<StudentSubjectAttendance>
-
-<h2>@Model.First().Subject.SubjectName</h2>
 <form method="post" action="@Url.Action("SaveAttendance", "Home")">
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
@@ -34,18 +32,7 @@
                     <input type="hidden" name="Attendances[@i].StudentId" value="@student.Id" />
                     <input type="hidden" name="Attendances[@i].SubjectId" value="@subject.Id" />
 
-                    @for (int j = 0; j < Model[i].Student.StudentSubjectAttendances.Count; j++)
-                    {
-                        var attendance = Model[i].Student.StudentSubjectAttendances[j];
 
-                        <td class="text-center">
-                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].Id" value="@attendance.Id" />
-                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].Date" value="@attendance.Date" />
-                            <input type="checkbox" name="Attendances[@i].Student.StudentSubjectAttendances[@j].IsPresent" value="true"
-                            @(attendance.IsPresent ? "checked" : "") onchange="updateHiddenField(this)" />
-                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].IsPresent" value="false" />
-                        </td>
-                    }
                 </tr>
             }
         </tbody>

@@ -12,6 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Đăng ký DI
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
 var app = builder.Build();
 
@@ -30,6 +31,6 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Subject}/{action=Index}/{id?}");
 
 app.Run();

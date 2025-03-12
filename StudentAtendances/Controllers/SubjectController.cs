@@ -6,14 +6,14 @@ using StudentAtendances.Repository.Interfaces.Groups;
 
 namespace StudentAtendances.Controllers
 {
-    public class HomeController : Controller
+    public class SubjectController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<SubjectController> _logger;
         private readonly IAttendanceRepository _attendanceRepository;
         private readonly IGroupRepository _groupRepository;
 
-        public HomeController(
-            ILogger<HomeController> logger,
+        public SubjectController(
+            ILogger<SubjectController> logger,
             IAttendanceRepository attendanceRepository,
             IGroupRepository groupRepository
         )
@@ -23,28 +23,36 @@ namespace StudentAtendances.Controllers
             _groupRepository = groupRepository;
         }
 
-        public async Task<IActionResult> Index(int subjectId = 1)
+        public async Task<IActionResult> Index()
         {
-            var studentSubjectAttendances = await _groupRepository.GetStudentSubjectAttendances(
-                subjectId
-            );
-            var studentAttendances = studentSubjectAttendances
-                .DistinctBy(x => x.StudentId)
-                .ToList();
-
-            return View(studentAttendances);
+            var subjects = await _groupRepository.GetSubjects(1);
+            return View(subjects);
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveAttendance(List<StudentSubjectAttendance> attendances)
+        public async Task<IActionResult> AddSubject(Subject subject)
         {
-            if (attendances == null || attendances.Count == 0)
+            if (ModelState.IsValid)
             {
-                return BadRequest("Không có dữ liệu điểm danh.");
+                await _groupRepository.AddSubject(subject);
             }
+            return RedirectToAction("Index");
+        }
 
-            await _groupRepository.Update(attendances);
+        [HttpPost]
+        [HttpPost]
+        public async Task<IActionResult> EditSubject(
+            [Bind("Id,SubjectCode,SubjectName,LecturerId")] Subject subject
+        )
+        {
+            await _groupRepository.UpdateSubject(subject);
+            return RedirectToAction("Index");
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteSubject(int id)
+        {
+            await _groupRepository.DeleteSubject(id);
             return RedirectToAction("Index");
         }
 

@@ -6,28 +6,20 @@ using StudentAtendances.Repository.Interfaces.Groups;
 
 namespace StudentAtendances.Controllers
 {
-    public class HomeController : Controller
+    public class GroupController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly IAttendanceRepository _attendanceRepository;
+        private readonly ILogger<GroupController> _logger;
         private readonly IGroupRepository _groupRepository;
 
-        public HomeController(
-            ILogger<HomeController> logger,
-            IAttendanceRepository attendanceRepository,
-            IGroupRepository groupRepository
-        )
+        public GroupController(ILogger<GroupController> logger, IGroupRepository groupRepository)
         {
             _logger = logger;
-            _attendanceRepository = attendanceRepository;
             _groupRepository = groupRepository;
         }
 
-        public async Task<IActionResult> Index(int subjectId = 1)
+        public async Task<IActionResult> Index()
         {
-            var studentSubjectAttendances = await _groupRepository.GetStudentSubjectAttendances(
-                subjectId
-            );
+            var studentSubjectAttendances = await _groupRepository.GetStudentSubjectAttendances(1);
             var studentAttendances = studentSubjectAttendances
                 .DistinctBy(x => x.StudentId)
                 .ToList();
