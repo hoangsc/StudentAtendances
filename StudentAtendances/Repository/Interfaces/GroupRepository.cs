@@ -100,5 +100,16 @@ namespace StudentAtendances.Repository.Interfaces
             }
         }
         #endregion
+
+        #region Lecture
+        public async Task<Lecturer?> GetLecturer(string email, string password)
+        {
+            var lecturer = await _context.Lecturers.FirstOrDefaultAsync(x =>
+                x.Email == email && x.Password == password
+            );
+
+            return lecturer;
+        }
+        #endregion
     }
 }

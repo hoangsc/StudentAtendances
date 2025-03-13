@@ -3,8 +3,6 @@
 }
 @model List<Subject>
 
-<h2>Danh sách môn học</h2>
-
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -21,7 +19,7 @@
             <tr>
                 <td>@subject.Id</td>
                 <td>
-                    <a href="@Url.Action("Index", "Home", new { subjectId = subject.Id })"
+                    <a href="@Url.Action("SubjectAttendance", "Home", new { subjectId = subject.Id })"
                        class="text-primary"
                        style="text-decoration: underline;">
                         @subject.SubjectCode

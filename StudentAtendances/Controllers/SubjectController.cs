@@ -40,12 +40,35 @@ namespace StudentAtendances.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
         public async Task<IActionResult> EditSubject(
             [Bind("Id,SubjectCode,SubjectName,LecturerId")] Subject subject
         )
         {
-            await _groupRepository.UpdateSubject(subject);
+            var studentSubjectAttendances = await _groupRepository.GetStudentSubjectAttendances(
+                subject.Id
+            );
+
+            var listDate = studentSubjectAttendances.DistinctBy(x => x.Date).ToList();
+
+            // await _groupRepository.UpdateSubject(subject);
+            return View("EditSubject", listDate);
+        }
+
+        [HttpPost]
+        public IActionResult SaveSubject(int SubjectId, List<DateTime> Dates)
+        {
+            // Kiểm tra dữ liệu nhận được
+            Console.WriteLine($"SubjectId: {SubjectId}");
+            foreach (var date in Dates)
+            {
+                Console.WriteLine($"Date: {date.ToString("dd/MM/yyyy")}");
+            }
+
+            // Xử lý logic lưu vào database (ví dụ)
+            // _dbContext.StudentSubjectAttendances.AddRange(...);
+            // _dbContext.SaveChanges();
+
+            // Chuyển hướng sau khi lưu thành công
             return RedirectToAction("Index");
         }
 

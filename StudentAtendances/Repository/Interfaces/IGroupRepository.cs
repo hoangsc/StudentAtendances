@@ -18,5 +18,9 @@ namespace StudentAtendances.Repository.Interfaces.Groups
         Task UpdateSubject(Subject subject);
         Task DeleteSubject(int id);
         #endregion
+
+        #region Lecturer
+        Task<Lecturer?> GetLecturer(string email, string password);
+        #endregion
     }
 }

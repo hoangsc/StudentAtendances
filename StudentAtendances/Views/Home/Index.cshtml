@@ -4,54 +4,92 @@
 
 @model List<StudentSubjectAttendance>
 
-<h2>@Model.First().Subject.SubjectName</h2>
-<form method="post" action="@Url.Action("SaveAttendance", "Home")">
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th style ="text-align: left !important;">Tên</th>
-                <th style="text-align: left !important;">Mã sinh viên</th>
-                @for (int i = 0; i < Model.FirstOrDefault()!.Student.StudentSubjectAttendances.Count; i++)
-                {
-                    var date = Model.FirstOrDefault()!.Student.StudentSubjectAttendances[i].Date;
-                    <th>
-                        @date.ToString("dd/MM/yyyy")
-                    </th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Count; i++)
-            {
-                var student = Model[i].Student;
-                var subject = Model[i].Subject;
-                <tr>
-                    <td style="text-align: left !important;">@student.Name</td>
+<div class="row">
+    <div class="col-12">
+        <form method="post" action="@Url.Action("SaveAttendance", "Home")">
+        <div class="card">
+            
+            <div class="card-header">
+                    <h3 class="card-title">@Model.First().Subject.SubjectName</h3>
 
-                    <td style="text-align: left !important;">@student.StudentCode</td>
+                <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-                    <!-- Gửi StudentId để xác định sinh viên -->
-                    <input type="hidden" name="Attendances[@i].StudentId" value="@student.Id" />
-                    <input type="hidden" name="Attendances[@i].SubjectId" value="@subject.Id" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="text-align: left !important;">Tên</th>
+                                <th style="text-align: left !important;">Mã sinh viên</th>
+                                @for (int i = 0; i < Model.FirstOrDefault()!.Student.StudentSubjectAttendances.Count; i++)
+                                {
+                                    var date = Model.FirstOrDefault()!.Student.StudentSubjectAttendances[i].Date;
+                                    <th style="text-align: center !important;">
+                                        @date.ToString("dd/MM/yyyy")
+                                    </th>
+                                }
+                            </tr>
+                    </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+                                var student = Model[i].Student;
+                                var subject = Model[i].Subject;
+                                <tr>
+                                    <td style="text-align: left !important;">@student.Name</td>
 
-                    @for (int j = 0; j < Model[i].Student.StudentSubjectAttendances.Count; j++)
-                    {
-                        var attendance = Model[i].Student.StudentSubjectAttendances[j];
+                                    <td style="text-align: left !important;">@student.StudentCode</td>
 
-                        <td class="text-center">
-                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].Id" value="@attendance.Id" />
-                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].Date" value="@attendance.Date" />
-                            <input type="checkbox" name="Attendances[@i].Student.StudentSubjectAttendances[@j].IsPresent" value="true"
-                            @(attendance.IsPresent ? "checked" : "") onchange="updateHiddenField(this)" />
-                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].IsPresent" value="false" />
-                        </td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
-    <button type="submit" class="btn btn-primary">Lưu điểm danh</button>
-</form>
+                                    <!-- Gửi StudentId để xác định sinh viên -->
+                                    <input type="hidden" name="Attendances[@i].StudentId" value="@student.Id" />
+                                    <input type="hidden" name="Attendances[@i].SubjectId" value="@subject.Id" />
+
+                                    @for (int j = 0; j < Model[i].Student.StudentSubjectAttendances.Count; j++)
+                                    {
+                                        var attendance = Model[i].Student.StudentSubjectAttendances[j];
+
+                                        <td class="text-center">
+                                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].Id" value="@attendance.Id" />
+                                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].Date" value="@attendance.Date" />
+                                            <input type="checkbox" name="Attendances[@i].Student.StudentSubjectAttendances[@j].IsPresent" value="true"
+                                            @(attendance.IsPresent ? "checked" : "") onchange="updateHiddenField(this)" />
+                                            <input type="hidden" name="Attendances[@i].Student.StudentSubjectAttendances[@j].IsPresent" value="false" />
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+
+                </table>
+               
+            </div>
+
+            <button type="submit" class="btn btn-primary">Lưu điểm danh</button>
+           
+
+
+          
+            <!-- /.card-body -->
+            
+        </div>
+        </form>
+
+        <!-- /.card -->
+    </div>
+</div>
+<!-- /.row -->
+
 
 <script>
     function updateHiddenField(checkbox) {

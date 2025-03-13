@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentAtendances.Models;
 using StudentAtendances.Repository.Interfaces;
@@ -12,6 +13,8 @@ namespace StudentAtendances.Controllers
         private readonly IAttendanceRepository _attendanceRepository;
         private readonly IGroupRepository _groupRepository;
 
+        private string? loggedAccount;
+
         public HomeController(
             ILogger<HomeController> logger,
             IAttendanceRepository attendanceRepository,
@@ -23,7 +26,23 @@ namespace StudentAtendances.Controllers
             _groupRepository = groupRepository;
         }
 
-        public async Task<IActionResult> Index(int subjectId = 1)
+        /// <summary>
+        /// Kiểm tra đã login hay chưa
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Index()
+        {
+            loggedAccount = HttpContext.Session.GetString("Username");
+
+            if (string.IsNullOrEmpty(loggedAccount))
+            {
+                return View("Login");
+            }
+
+            return RedirectToAction("Index", "Subject");
+        }
+
+        public async Task<IActionResult> SubjectAttendance(int subjectId = 1)
         {
             var studentSubjectAttendances = await _groupRepository.GetStudentSubjectAttendances(
                 subjectId
@@ -32,7 +51,7 @@ namespace StudentAtendances.Controllers
                 .DistinctBy(x => x.StudentId)
                 .ToList();
 
-            return View(studentAttendances);
+            return View("Index", studentAttendances);
         }
 
         [HttpPost]
@@ -63,5 +82,40 @@ namespace StudentAtendances.Controllers
                 }
             );
         }
+
+        #region Login
+
+        public async Task<IActionResult> Login()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            HttpContext.Session.Remove("Username");
+
+            return View("Login");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ValidateLogin(string email, string password, bool remember)
+        {
+            var lecturer = await _groupRepository.GetLecturer(email, password);
+
+            if ((email == "admin@gmail.com" && password == "123") || lecturer != null)
+            {
+                HttpContext.Session.SetString("Username", lecturer?.Name ?? "Admin");
+
+                TempData["Message"] = "Login successful!";
+                return RedirectToAction("Index", "Home"); // Chuyển hướng đến trang chính
+            }
+            else
+            {
+                ViewBag.Error = "Invalid email or password!";
+                return View("Login"); // Trả về lại trang đăng nhập với thông báo lỗi
+            }
+        }
+
+        #endregion
     }
 }
