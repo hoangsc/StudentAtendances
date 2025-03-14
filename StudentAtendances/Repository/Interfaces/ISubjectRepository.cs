@@ -2,14 +2,10 @@
 
 namespace StudentAtendances.Repository.Interfaces.Groups
 {
-    public interface IGroupRepository
+    public interface ISubjectRepository
     {
         Task<IList<StudentSubjectAttendance>> GetStudentSubjectAttendances(int subjectId);
-
-        Task<Group?> GetById(int id);
-        Task Add(Group group);
         Task Update(List<StudentSubjectAttendance> attendances);
-        Task Delete(int id);
         Task<int> SaveChanges();
 
         #region Subject

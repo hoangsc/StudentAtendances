@@ -11,14 +11,14 @@ namespace StudentAtendances.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IAttendanceRepository _attendanceRepository;
-        private readonly IGroupRepository _groupRepository;
+        private readonly ISubjectRepository _groupRepository;
 
         private string? loggedAccount;
 
         public HomeController(
             ILogger<HomeController> logger,
             IAttendanceRepository attendanceRepository,
-            IGroupRepository groupRepository
+            ISubjectRepository groupRepository
         )
         {
             _logger = logger;
@@ -30,7 +30,7 @@ namespace StudentAtendances.Controllers
         /// Kiểm tra đã login hay chưa
         /// </summary>
         /// <returns></returns>
-        public IActionResult Index()
+        public IActionResult Index(int lectureId)
         {
             loggedAccount = HttpContext.Session.GetString("Username");
 
@@ -39,10 +39,10 @@ namespace StudentAtendances.Controllers
                 return View("Login");
             }
 
-            return RedirectToAction("Index", "Subject");
+            return RedirectToAction("Index", "Subject", new { lectureId });
         }
 
-        public async Task<IActionResult> SubjectAttendance(int subjectId = 1)
+        public async Task<IActionResult> SubjectAttendance(int subjectId)
         {
             var studentSubjectAttendances = await _groupRepository.GetStudentSubjectAttendances(
                 subjectId
@@ -51,7 +51,7 @@ namespace StudentAtendances.Controllers
                 .DistinctBy(x => x.StudentId)
                 .ToList();
 
-            return View("Index", studentAttendances);
+            return View("SubjectAttendance", studentAttendances);
         }
 
         [HttpPost]
@@ -62,9 +62,11 @@ namespace StudentAtendances.Controllers
                 return BadRequest("Không có dữ liệu điểm danh.");
             }
 
+            var subjectId = attendances[0].SubjectId;
+
             await _groupRepository.Update(attendances);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("SubjectAttendance", new { subjectId });
         }
 
         public IActionResult Privacy()
@@ -102,12 +104,12 @@ namespace StudentAtendances.Controllers
         {
             var lecturer = await _groupRepository.GetLecturer(email, password);
 
-            if ((email == "admin@gmail.com" && password == "123") || lecturer != null)
+            if (lecturer != null)
             {
                 HttpContext.Session.SetString("Username", lecturer?.Name ?? "Admin");
 
                 TempData["Message"] = "Login successful!";
-                return RedirectToAction("Index", "Home"); // Chuyển hướng đến trang chính
+                return RedirectToAction("Index", "Home", new { lectureId = lecturer.Id }); // Chuyển hướng đến trang chính
             }
             else
             {

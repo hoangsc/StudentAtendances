@@ -10,12 +10,12 @@ namespace StudentAtendances.Controllers
     {
         private readonly ILogger<SubjectController> _logger;
         private readonly IAttendanceRepository _attendanceRepository;
-        private readonly IGroupRepository _groupRepository;
+        private readonly ISubjectRepository _groupRepository;
 
         public SubjectController(
             ILogger<SubjectController> logger,
             IAttendanceRepository attendanceRepository,
-            IGroupRepository groupRepository
+            ISubjectRepository groupRepository
         )
         {
             _logger = logger;
@@ -23,9 +23,16 @@ namespace StudentAtendances.Controllers
             _groupRepository = groupRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int lectureId)
         {
-            var subjects = await _groupRepository.GetSubjects(1);
+            var loggedAccount = HttpContext.Session.GetString("Username");
+
+            if (string.IsNullOrEmpty(loggedAccount))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var subjects = await _groupRepository.GetSubjects(lectureId);
             return View(subjects);
         }
 
@@ -55,11 +62,16 @@ namespace StudentAtendances.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveSubject(int SubjectId, List<DateTime> Dates)
+        public IActionResult SaveSubject(
+            int subjectId,
+            string subjectname,
+            string subjectCode,
+            List<DateTime> dates
+        )
         {
             // Kiểm tra dữ liệu nhận được
-            Console.WriteLine($"SubjectId: {SubjectId}");
-            foreach (var date in Dates)
+            Console.WriteLine($"SubjectId: {subjectCode}");
+            foreach (var date in dates)
             {
                 Console.WriteLine($"Date: {date.ToString("dd/MM/yyyy")}");
             }
@@ -73,10 +85,11 @@ namespace StudentAtendances.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteSubject(int id)
+        public async Task<IActionResult> DeleteSubject(int id, int lectureId)
         {
             await _groupRepository.DeleteSubject(id);
-            return RedirectToAction("Index");
+
+            return RedirectToAction("Index", new { lectureId });
         }
 
         public IActionResult Privacy()

@@ -79,16 +79,23 @@ public class AppDbContext : DbContext
             new()
             {
                 Id = 1,
-                Name = "Nguyen Van A",
-                Email = "a@example.com",
-                Password = "hashedpassword1",
+                Name = "le Van Hieu",
+                Email = "Hieu@ictu.com",
+                Password = "123",
             },
             new()
             {
                 Id = 2,
-                Name = "Tran Thi B",
-                Email = "b@example.com",
-                Password = "hashedpassword2",
+                Name = "Tran Van Nam",
+                Email = "Nam@ictu.com",
+                Password = "123",
+            },
+            new()
+            {
+                Id = 3,
+                Name = "Duc Canh",
+                Email = "Canh@ictu.com",
+                Password = "123",
             },
         };
         modelBuilder.Entity<Lecturer>().HasData(lecturers);

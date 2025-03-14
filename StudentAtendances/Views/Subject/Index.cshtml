@@ -28,9 +28,17 @@
                 <td>@subject.SubjectName</td>
                 <td>@subject.Lecturer.Name</td>
                 <td>
-                    <button class="btn btn-warning btn-sm" onclick="editSubject(@subject.Id, '@subject.SubjectCode', '@subject.SubjectName', @subject.LecturerId)">Sửa</button>
+                    <form action="/Subject/EditSubject" method="post" style="display:inline;">
+                        <input type="hidden" name="Id" value="@subject.Id" />
+                        <input type="hidden" name="SubjectCode" value="@subject.SubjectCode" />
+                        <input type="hidden" name="SubjectName" value="@subject.SubjectName" />
+                        <input type="hidden" name="LecturerId" value="@subject.LecturerId" />
+                        <button type="submit" class="btn btn-warning btn-sm">Sửa</button>
+                    </form>
+
                     <form asp-action="DeleteSubject" method="post" style="display:inline;">
                         <input type="hidden" name="id" value="@subject.Id" />
+                        <input type="hidden" name="lectureId" value="@subject.LecturerId" />
                         <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
                     </form>
                 </td>

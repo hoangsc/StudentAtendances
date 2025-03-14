@@ -4,21 +4,16 @@ using StudentAtendances.Repository.Interfaces.Groups;
 
 namespace StudentAtendances.Repository.Interfaces
 {
-    public class GroupRepository : IGroupRepository
+    public class SubjectRepository : ISubjectRepository
     {
         private readonly AppDbContext _context;
 
-        public GroupRepository(AppDbContext context)
+        public SubjectRepository(AppDbContext context)
         {
             _context = context;
         }
 
         public Task Add(Group group)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Delete(int id)
         {
             throw new NotImplementedException();
         }
@@ -34,11 +29,6 @@ namespace StudentAtendances.Repository.Interfaces
                 .ToListAsync();
 
             return groups;
-        }
-
-        public Task<Group?> GetById(int id)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<int> SaveChanges()
@@ -70,12 +60,12 @@ namespace StudentAtendances.Repository.Interfaces
         #region Subject
         public async Task<IList<Subject>> GetSubjects(int lectureId)
         {
-            var groups = await _context
+            var subjects = await _context
                 .Subjects.Where(x => x.LecturerId == lectureId)
                 .Include(x => x.Lecturer)
                 .ToListAsync();
 
-            return groups;
+            return subjects;
         }
 
         public async Task AddSubject(Subject subject)
@@ -92,6 +82,15 @@ namespace StudentAtendances.Repository.Interfaces
 
         public async Task DeleteSubject(int id)
         {
+            // Net core <=6
+            //var existingstudentSubjectAttendances = _context.StudentSubjectAttendances.Where(x =>
+            //    x.SubjectId == id
+            //);
+            //_context.StudentSubjectAttendances.RemoveRange(existingstudentSubjectAttendances);
+
+            // Net core > 7
+            _context.StudentSubjectAttendances.Where(x => x.SubjectId == id).ExecuteDelete();
+
             var subject = await _context.Subjects.FindAsync(id);
             if (subject != null)
             {

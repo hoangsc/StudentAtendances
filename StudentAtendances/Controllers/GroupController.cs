@@ -9,9 +9,9 @@ namespace StudentAtendances.Controllers
     public class GroupController : Controller
     {
         private readonly ILogger<GroupController> _logger;
-        private readonly IGroupRepository _groupRepository;
+        private readonly ISubjectRepository _groupRepository;
 
-        public GroupController(ILogger<GroupController> logger, IGroupRepository groupRepository)
+        public GroupController(ILogger<GroupController> logger, ISubjectRepository groupRepository)
         {
             _logger = logger;
             _groupRepository = groupRepository;

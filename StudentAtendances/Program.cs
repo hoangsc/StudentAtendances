@@ -11,7 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 // Đăng ký DI
-builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
 // Add for session
@@ -34,6 +34,18 @@ app.UseSession();
 
 app.UseRouting();
 
+// handle page not found
+app.Use(
+    async (context, next) =>
+    {
+        await next();
+
+        if (context.Response.StatusCode == 404)
+        {
+            context.Response.Redirect("/Error/NotFound");
+        }
+    }
+);
 app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
