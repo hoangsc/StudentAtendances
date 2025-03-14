@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentAtendances.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateAttendanceWithDate : Migration
+    public partial class init1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -95,7 +95,8 @@ namespace StudentAtendances.Migrations
                 name: "StudentSubjectAttendances",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     StudentId = table.Column<int>(type: "int", nullable: false),
                     SubjectId = table.Column<int>(type: "int", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -121,8 +122,9 @@ namespace StudentAtendances.Migrations
                 columns: new[] { "Id", "Email", "Name", "Password" },
                 values: new object[,]
                 {
-                    { 1, "a@example.com", "Nguyen Van A", "hashedpassword1" },
-                    { 2, "b@example.com", "Tran Thi B", "hashedpassword2" }
+                    { 1, "Hieu@ictu.com", "le Van Hieu", "123" },
+                    { 2, "Nam@ictu.com", "Tran Van Nam", "123" },
+                    { 3, "Canh@ictu.com", "Duc Canh", "123" }
                 });
 
             migrationBuilder.InsertData(

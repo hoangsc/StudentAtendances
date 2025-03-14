@@ -79,7 +79,7 @@ public class AppDbContext : DbContext
             new()
             {
                 Id = 1,
-                Name = "le Van Hieu",
+                Name = "Le Van Hieu",
                 Email = "Hieu@ictu.com",
                 Password = "123",
             },

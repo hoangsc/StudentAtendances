@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudentAtendances.Models;
+using StudentAtendances.Models.DTO;
 using StudentAtendances.Repository.Interfaces.Groups;
 
 namespace StudentAtendances.Repository.Interfaces
@@ -74,10 +75,76 @@ namespace StudentAtendances.Repository.Interfaces
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateSubject(Subject subject)
+        public async Task UpdateSubject(UpdateSubjectParam updateSubjectParam)
         {
-            _context.Subjects.Update(subject);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var existingSubject = await _context.Subjects.FirstOrDefaultAsync(x =>
+                    x.Id == updateSubjectParam.SubjectId
+                );
+
+                if (existingSubject != null)
+                {
+                    existingSubject.SubjectCode = updateSubjectParam.SubjectCode;
+                    existingSubject.SubjectName = updateSubjectParam.SubjectName;
+                }
+
+                var date = updateSubjectParam.Dates;
+
+                // Xoá những record theo ngày hiện tại trong database
+                var datesNeedToRemove = await _context
+                    .StudentSubjectAttendances.Where(x =>
+                        x.SubjectId == updateSubjectParam.SubjectId && !date.Contains(x.Date)
+                    )
+                    .ExecuteDeleteAsync();
+
+                // Lấy toàn bộ danh sách ngày có trong database
+                var datesInDb = await _context
+                    .StudentSubjectAttendances.Where(x =>
+                        x.SubjectId == updateSubjectParam.SubjectId
+                    )
+                    .Select(x => x.Date)
+                    .Distinct()
+                    .ToListAsync();
+
+                // Lọc ra danh sách ngày có trong `date` nhưng không có trong database
+                var datesNeedToAdd = date.Except(datesInDb).ToList();
+
+                var listStudentId = await _context
+                    .StudentSubjectAttendances.Where(x =>
+                        x.SubjectId == updateSubjectParam.SubjectId
+                    )
+                    .Select(x => x.StudentId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var studentSubjects = new List<StudentSubjectAttendance>();
+
+                foreach (var studentId in listStudentId)
+                {
+                    foreach (var newDate in datesNeedToAdd)
+                    {
+                        studentSubjects.Add(
+                            new StudentSubjectAttendance
+                            {
+                                StudentId = studentId,
+                                SubjectId = updateSubjectParam.SubjectId,
+                                IsPresent = false,
+                                Date = newDate,
+                            }
+                        );
+                    }
+                }
+                await _context.StudentSubjectAttendances.AddRangeAsync(studentSubjects);
+
+                await _context.SaveChangesAsync();
+
+                Console.WriteLine("SaveChanges executed successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
 
         public async Task DeleteSubject(int id)

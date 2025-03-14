@@ -6,6 +6,7 @@
     public class Lecturer
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
@@ -28,6 +29,7 @@
     public class Subject
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
@@ -44,6 +46,7 @@
     public class Student
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
@@ -63,6 +66,7 @@
     public class StudentSubjectAttendance
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [ForeignKey(nameof(StudentId))]
@@ -80,6 +84,7 @@
     public class Group
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string GroupName { get; set; }
         public string SchoolYears { get; set; }

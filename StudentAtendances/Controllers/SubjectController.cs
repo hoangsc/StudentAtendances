@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using StudentAtendances.Models;
-using StudentAtendances.Repository.Interfaces;
+using StudentAtendances.Models.DTO;
 using StudentAtendances.Repository.Interfaces.Groups;
 
 namespace StudentAtendances.Controllers
@@ -9,18 +9,17 @@ namespace StudentAtendances.Controllers
     public class SubjectController : Controller
     {
         private readonly ILogger<SubjectController> _logger;
-        private readonly IAttendanceRepository _attendanceRepository;
-        private readonly ISubjectRepository _groupRepository;
+        private readonly ISubjectRepository _subjectRepository;
+
+        private int LectureId => HttpContext.Session.GetInt32("LectureId") ?? 0;
 
         public SubjectController(
             ILogger<SubjectController> logger,
-            IAttendanceRepository attendanceRepository,
-            ISubjectRepository groupRepository
+            ISubjectRepository subjectRepository
         )
         {
             _logger = logger;
-            _attendanceRepository = attendanceRepository;
-            _groupRepository = groupRepository;
+            _subjectRepository = subjectRepository;
         }
 
         public async Task<IActionResult> Index(int lectureId)
@@ -32,7 +31,7 @@ namespace StudentAtendances.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var subjects = await _groupRepository.GetSubjects(lectureId);
+            var subjects = await _subjectRepository.GetSubjects(lectureId);
             return View(subjects);
         }
 
@@ -41,7 +40,7 @@ namespace StudentAtendances.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _groupRepository.AddSubject(subject);
+                await _subjectRepository.AddSubject(subject);
             }
             return RedirectToAction("Index");
         }
@@ -51,18 +50,18 @@ namespace StudentAtendances.Controllers
             [Bind("Id,SubjectCode,SubjectName,LecturerId")] Subject subject
         )
         {
-            var studentSubjectAttendances = await _groupRepository.GetStudentSubjectAttendances(
+            var studentSubjectAttendances = await _subjectRepository.GetStudentSubjectAttendances(
                 subject.Id
             );
 
             var listDate = studentSubjectAttendances.DistinctBy(x => x.Date).ToList();
 
-            // await _groupRepository.UpdateSubject(subject);
+            // await _subjectRepository.UpdateSubject(subject);
             return View("EditSubject", listDate);
         }
 
         [HttpPost]
-        public IActionResult SaveSubject(
+        public async Task<IActionResult> SaveSubject(
             int subjectId,
             string subjectname,
             string subjectCode,
@@ -76,18 +75,22 @@ namespace StudentAtendances.Controllers
                 Console.WriteLine($"Date: {date.ToString("dd/MM/yyyy")}");
             }
 
-            // Xử lý logic lưu vào database (ví dụ)
-            // _dbContext.StudentSubjectAttendances.AddRange(...);
-            // _dbContext.SaveChanges();
-
-            // Chuyển hướng sau khi lưu thành công
-            return RedirectToAction("Index");
+            await _subjectRepository.UpdateSubject(
+                new UpdateSubjectParam
+                {
+                    SubjectId = subjectId,
+                    SubjectCode = subjectCode,
+                    SubjectName = subjectname,
+                    Dates = dates,
+                }
+            );
+            return RedirectToAction("Index", new { LectureId });
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteSubject(int id, int lectureId)
         {
-            await _groupRepository.DeleteSubject(id);
+            await _subjectRepository.DeleteSubject(id);
 
             return RedirectToAction("Index", new { lectureId });
         }

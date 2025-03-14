@@ -241,7 +241,10 @@ namespace StudentAtendances.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");

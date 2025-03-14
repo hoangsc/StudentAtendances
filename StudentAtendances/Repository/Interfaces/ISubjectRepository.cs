@@ -1,4 +1,5 @@
 ﻿using StudentAtendances.Models;
+using StudentAtendances.Models.DTO;
 
 namespace StudentAtendances.Repository.Interfaces.Groups
 {
@@ -11,7 +12,7 @@ namespace StudentAtendances.Repository.Interfaces.Groups
         #region Subject
         Task<IList<Subject>> GetSubjects(int groupId);
         Task AddSubject(Subject subject);
-        Task UpdateSubject(Subject subject);
+        Task UpdateSubject(UpdateSubjectParam updateSubjectParam);
         Task DeleteSubject(int id);
         #endregion
 

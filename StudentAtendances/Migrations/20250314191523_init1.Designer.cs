@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace StudentAtendances.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250303182100_UpdateAttendanceWithDate")]
-    partial class UpdateAttendanceWithDate
+    [Migration("20250314191523_init1")]
+    partial class init1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,16 +103,23 @@ namespace StudentAtendances.Migrations
                         new
                         {
                             Id = 1,
-                            Email = "a@example.com",
-                            Name = "Nguyen Van A",
-                            Password = "hashedpassword1"
+                            Email = "Hieu@ictu.com",
+                            Name = "le Van Hieu",
+                            Password = "123"
                         },
                         new
                         {
                             Id = 2,
-                            Email = "b@example.com",
-                            Name = "Tran Thi B",
-                            Password = "hashedpassword2"
+                            Email = "Nam@ictu.com",
+                            Name = "Tran Van Nam",
+                            Password = "123"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "Canh@ictu.com",
+                            Name = "Duc Canh",
+                            Password = "123"
                         });
                 });
 
@@ -237,7 +244,10 @@ namespace StudentAtendances.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");

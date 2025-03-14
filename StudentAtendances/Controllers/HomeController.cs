@@ -10,20 +10,14 @@ namespace StudentAtendances.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IAttendanceRepository _attendanceRepository;
-        private readonly ISubjectRepository _groupRepository;
+        private readonly ISubjectRepository _subjectRepository;
 
         private string? loggedAccount;
 
-        public HomeController(
-            ILogger<HomeController> logger,
-            IAttendanceRepository attendanceRepository,
-            ISubjectRepository groupRepository
-        )
+        public HomeController(ILogger<HomeController> logger, ISubjectRepository subjectRepository)
         {
             _logger = logger;
-            _attendanceRepository = attendanceRepository;
-            _groupRepository = groupRepository;
+            _subjectRepository = subjectRepository;
         }
 
         /// <summary>
@@ -44,7 +38,7 @@ namespace StudentAtendances.Controllers
 
         public async Task<IActionResult> SubjectAttendance(int subjectId)
         {
-            var studentSubjectAttendances = await _groupRepository.GetStudentSubjectAttendances(
+            var studentSubjectAttendances = await _subjectRepository.GetStudentSubjectAttendances(
                 subjectId
             );
             var studentAttendances = studentSubjectAttendances
@@ -64,7 +58,7 @@ namespace StudentAtendances.Controllers
 
             var subjectId = attendances[0].SubjectId;
 
-            await _groupRepository.Update(attendances);
+            await _subjectRepository.Update(attendances);
 
             return RedirectToAction("SubjectAttendance", new { subjectId });
         }
@@ -102,11 +96,12 @@ namespace StudentAtendances.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidateLogin(string email, string password, bool remember)
         {
-            var lecturer = await _groupRepository.GetLecturer(email, password);
+            var lecturer = await _subjectRepository.GetLecturer(email, password);
 
             if (lecturer != null)
             {
                 HttpContext.Session.SetString("Username", lecturer?.Name ?? "Admin");
+                HttpContext.Session.SetInt32("LectureId", lecturer?.Id ?? 0);
 
                 TempData["Message"] = "Login successful!";
                 return RedirectToAction("Index", "Home", new { lectureId = lecturer.Id }); // Chuyển hướng đến trang chính
