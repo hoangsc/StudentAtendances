@@ -109,6 +109,8 @@ namespace StudentAtendances.Controllers
             else
             {
                 ViewBag.Error = "Invalid email or password!";
+                ModelState.AddModelError("LoginError", "Invalid email or password!");
+
                 return View("Login"); // Trả về lại trang đăng nhập với thông báo lỗi
             }
         }

@@ -78,3 +78,13 @@
     <script src="../../dist/js/adminlte.min.js"></script>
 </body>
 </html>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState["LoginError"]?.Errors)
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
